@@ -1,5 +1,4 @@
 # GameCube Donut
-------
 
 GameCube Donut is a port of Wii Donut for the GameCube.
 
