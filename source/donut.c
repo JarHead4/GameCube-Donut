@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <gccore.h>
-#include <wiiuse/wpad.h>
 #include <aesndlib.h>
 #include <gcmodplay.h>
 #include <string.h>
 #include <math.h>
+#include <unistd.h>
 
 #include "music_mod.h"
 
@@ -20,21 +20,17 @@ int main(int argc, char **argv) {
 	// Initialise the video system
 	VIDEO_Init();
 
-	// This function initialises the attached controllers
-	WPAD_Init();
-
 	// Initialise the audio subsystem
 	AESND_Init();
 
 	// Obtain the preferred video mode from the system
-	// This will correspond to the settings in the Wii menu
 	rmode = VIDEO_GetPreferredMode(NULL);
 
 	// Allocate memory for the display in the uncached region
 	xfb = MEM_K0_TO_K1(SYS_AllocateFramebuffer(rmode));
 
 	// Initialise the console, required for printf
-	console_init(xfb,20,20,rmode->fbWidth,rmode->xfbHeight,rmode->fbWidth*VI_DISPLAY_PIX_SZ);
+	console_init(xfb, 0, 0, rmode->fbWidth, rmode->xfbHeight,rmode->fbWidth * VI_DISPLAY_PIX_SZ);
 
 	// Set up the video registers with the chosen mode
 	VIDEO_Configure(rmode);
@@ -74,12 +70,7 @@ int main(int argc, char **argv) {
 	int k;
 	float z[1760];
 	char b[1760];
-	for(;;) {
-		WPAD_ScanPads();
-		u32 pressed = WPAD_ButtonsDown(0);
-		if ( pressed & WPAD_BUTTON_HOME ) {
-			exit(0);
-		}
+	while(1) {
 		memset(b,32,1760);
 			memset(z,0,7040);
 			for(j=0; j < 6.28; j += 0.07) {
@@ -115,9 +106,9 @@ int main(int argc, char **argv) {
 		usleep(30000);
 
 		printf(" \x1b[44;37m.----------------------------------------------------------------------------.\x1b[40;37m\n");
-		printf(" \x1b[44;37m|  Wii Donut v1.0                                     (Press HOME to quit.)  |\x1b[40;37m\n");
+		printf(" \x1b[44;37m|  GameCube Donut v1.0                                                       |\x1b[40;37m\n");
 		printf(" \x1b[44;37m|  Based on the original donut.c by Andy Sloane <andy@a1k0n.net>             |\x1b[40;37m\n");
-		printf(" \x1b[44;37m|  Ported (copied and pasted) by jornmann <jornmann@duck.com>                |\x1b[40;37m\n");
+		printf(" \x1b[44;37m|  Wii Donut by jornmann <jornmann@duck.com>, GameCube port by JarHead       |\x1b[40;37m\n");
 		printf(" \x1b[44;37m|  Music by Jogeir Liljedahl                                                 |\x1b[40;37m\n");
 		printf(" \x1b[44;37m'----------------------------------------------------------------------------'\x1b[40;37m");
 		VIDEO_WaitVSync();
